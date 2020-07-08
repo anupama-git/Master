@@ -1,0 +1,66 @@
+---
+title: "Assignment_RR"
+author: "Anupama J"
+date: "7/8/2020"
+output: html_document
+---
+
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+
+
+
+library(dplyr)
+library(lubridate)
+
+library(ggplot2)
+library(httpuv)
+
+#Load file and have a quick look
+
+setwd("D:/__Data2019-20/Downloads")
+
+
+activity <- read.csv("activity.csv", header=TRUE, na.strings = "NA")
+
+# Clean up date class
+activity$date <- ymd(activity$date)
+
+# Remove NA
+activity1 <- na.omit(activity)
+
+# Make new variables 
+#activity$monthly <- as.numeric(format(activity$date, "%m"))
+#activity$daily <- as.numeric(format(activity$date, "%d"))
+
+# Quick check
+summary(activity1)
+
+str(activity1)
+head(activity1)
+tail(activity1)
+
+
+# Summarize data for ggplot
+activity2 <- summarize(group_by(activity1,date),daily.step=sum(steps))
+mean.activity <- as.integer(mean(activity2$daily.step))
+median.activity <- as.integer(median(activity2$daily.step))
+
+# Plot histogram
+plot.steps.day <- ggplot(activity2, aes(x=daily.step)) + 
+  geom_histogram(binwidth = 1000, aes(y=..count.., fill=..count..)) + 
+  geom_vline(xintercept=mean.activity, colour="red", linetype="dashed", size=1) +
+  geom_vline(xintercept=median.activity, colour="green" , linetype="dotted", size=1) +
+  labs(title="Histogram of Number of Steps taken each day", y="Frequency", x="Daily Steps") 
+plot.steps.day
+
+
+
+
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
